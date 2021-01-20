@@ -1,7 +1,6 @@
 import firebase from "firebase/app";
-import { createContext, PropsWithChildren } from "react";
+// import { createContext, PropsWithChildren } from "react";
 import firebaseConfig from "./firebaseConfig";
-import "firebase/auth";
 import "firebase/database";
 
 firebase.initializeApp(firebaseConfig);
@@ -19,25 +18,25 @@ firebase.initializeApp(firebaseConfig);
 
 export * from "./dataTypes";
 
-interface FirebaseContextValue {
-  /** the currently logged in user */
-  // user?: firebase.User | null;
-  /** the database */
-  db: firebase.database.Database;
-}
-export const FirebaseContext = createContext<FirebaseContextValue>(undefined!);
-const db = firebase.database();
+// interface FirebaseContextValue {
+//   /** the currently logged in user */
+//   // user?: firebase.User | null;
+//   /** the database */
+//   db: firebase.database.Database;
+// }
+// export const FirebaseContext = createContext<FirebaseContextValue>(undefined!);
+export const db = firebase.database();
 
-interface PublicProps {}
+// interface PublicProps {}
 
-type Props = PublicProps;
+// type Props = PublicProps;
 
-export const FirebaseContextManager = (props: PropsWithChildren<Props>) => {
-  const { children } = props;
+// export const FirebaseContextManager = (props: PropsWithChildren<Props>) => {
+//   const { children } = props;
 
-  const value: FirebaseContextValue = {
-    db,
-  };
+//   const value: FirebaseContextValue = {
+//     db,
+//   };
 
-  return <FirebaseContext.Provider value={value} children={children} />;
-};
+//   return <FirebaseContext.Provider value={value} children={children} />;
+// };

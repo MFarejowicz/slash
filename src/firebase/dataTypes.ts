@@ -1,1 +1,1 @@
-export type Pog = "test" | "hype";
+export type Test = "test" | "post";
