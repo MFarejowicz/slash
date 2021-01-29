@@ -1,4 +1,11 @@
 import { useEffect, useState } from "react";
+import useSound from "use-sound";
+import bamboo from "./assets/bamboo0.mp3";
+import slashFail from "./assets/slash-fail.mp3";
+import slashSuccess from "./assets/slash-fin.mp3";
+
+const START_RATE = 0.95;
+const RATE_INCREASE = 0.05;
 
 export enum Phase {
   Ready = "ready",
@@ -31,14 +38,14 @@ export interface Slash {
   reset: () => void;
 }
 
-export const useSlash = ({ sequence, time = 3000, onEnd }: Params): Slash => {
+export const useSlash = ({ sequence, time = 1000, onEnd }: Params): Slash => {
   const [phase, setPhase] = useState<Phase>(Phase.Ready);
   const [attempt, setAttempt] = useState<Sequence>([]);
   const [result, setResult] = useState<Result>(Result.NotFinished);
-
-  const getAttempt = () => {
-    return attempt.slice(0, sequence.length);
-  };
+  const [bambooRate, setBambooRate] = useState(START_RATE);
+  const [playBamboo] = useSound(bamboo, { playbackRate: bambooRate, volume: 0.9 });
+  const [playSuccess] = useSound(slashSuccess, { volume: 0.8 });
+  const [playFail] = useSound(slashFail, { volume: 1 });
 
   const start = () => {
     if (phase === Phase.Ready) {
@@ -48,9 +55,12 @@ export const useSlash = ({ sequence, time = 3000, onEnd }: Params): Slash => {
   };
 
   const add = (key: string) => {
-    if (phase !== Phase.Ended) {
+    if (phase !== Phase.Ended && attempt.length < sequence.length) {
       const updatedAttempt = attempt.concat(key.toLowerCase());
       setAttempt(updatedAttempt);
+
+      setBambooRate(bambooRate + RATE_INCREASE);
+      playBamboo();
     }
   };
 
@@ -59,6 +69,7 @@ export const useSlash = ({ sequence, time = 3000, onEnd }: Params): Slash => {
       setPhase(Phase.Ready);
       setAttempt([]);
       setResult(Result.NotFinished);
+      setBambooRate(START_RATE);
     }
   };
 
@@ -72,18 +83,21 @@ export const useSlash = ({ sequence, time = 3000, onEnd }: Params): Slash => {
 
         if (!actual) {
           setResult(Result.TooSlow);
+          playFail();
           return;
         }
 
         if (actual !== expected) {
           setResult(Result.Wrong);
+          playFail();
           return;
         }
       }
 
       setResult(Result.Success);
+      playSuccess();
     }
-  }, [phase, sequence, attempt, onEnd]);
+  }, [phase, sequence, attempt, onEnd, playFail, playSuccess]);
 
-  return { phase, attempt: getAttempt(), sequence, result, start, add, reset };
+  return { phase, attempt, sequence, result, start, add, reset };
 };
