@@ -1,17 +1,24 @@
 import classnames from "classnames";
-import { useCallback, useEffect } from "react";
-import { Phase, useSlash } from "../../useSlash";
+import { useCallback } from "react";
+import useEventListener from "@use-it/event-listener";
+import { Phase, Result, Sequence, useSlash } from "../../useSlash";
 import { parseResult } from "../../utils";
 import { Rod } from "../rod";
 import "./styles.css";
 
 const LETTER_REGEX = /^[a-z]$/i;
-const DEFAULT = ["j", "j", "f", "f", "k", "j", "f"];
 
-export const Slash = () => {
-  const slash = useSlash({
-    sequence: DEFAULT,
-  });
+interface PublicProps {
+  sequence: Sequence;
+  onRestart?: () => void;
+  onAdvance?: () => void;
+}
+
+type Props = PublicProps;
+
+export const Slash = (props: Props) => {
+  const { sequence, onRestart, onAdvance } = props;
+  const slash = useSlash({ sequence });
 
   const onKeyDown = useCallback(
     (event: KeyboardEvent) => {
@@ -22,20 +29,27 @@ export const Slash = () => {
         slash.add(key); // slash handles checking if not finished
       }
 
-      if (key === " " && !event.repeat) {
-        slash.reset();
+      if (!event.repeat && slash.phase === Phase.Ended) {
+        switch (key) {
+          case " ":
+            slash.reset();
+            onRestart?.();
+            break;
+          case "enter":
+            if (slash.result === Result.Success) {
+              slash.reset();
+              onAdvance?.();
+            }
+            break;
+          default:
+            break;
+        }
       }
     },
-    [slash]
+    [slash, onRestart, onAdvance]
   );
 
-  useEffect(() => {
-    document.addEventListener("keydown", onKeyDown);
-
-    return () => {
-      document.removeEventListener("keydown", onKeyDown);
-    };
-  }, [onKeyDown]);
+  useEventListener("keydown", onKeyDown);
 
   const classes = classnames("Slash-rods", { fadeOut: slash.phase === Phase.Started });
   return (
@@ -44,7 +58,8 @@ export const Slash = () => {
         <div>
           <div>Your attempt: {slash.attempt.join(" ")}</div>
           <div>Result: {parseResult(slash.result)}</div>
-          <div>Press SPACE to restart</div>
+          <div>Press SPACE to try again</div>
+          {slash.result === Result.Success && <div>Press ENTER to continue</div>}
         </div>
       )}
       <div className={classes}>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import useSound from "use-sound";
-import bamboo from "./assets/bamboo0.mp3";
+import bamboo from "./assets/bamboo.mp3";
 import slashFail from "./assets/slash-fail.mp3";
 import slashSuccess from "./assets/slash-fin.mp3";
 
@@ -42,6 +42,7 @@ export const useSlash = ({ sequence, time = 1000, onEnd }: Params): Slash => {
   const [phase, setPhase] = useState<Phase>(Phase.Ready);
   const [attempt, setAttempt] = useState<Sequence>([]);
   const [result, setResult] = useState<Result>(Result.NotFinished);
+
   const [bambooRate, setBambooRate] = useState(START_RATE);
   const [playBamboo] = useSound(bamboo, { playbackRate: bambooRate, volume: 0.9 });
   const [playSuccess] = useSound(slashSuccess, { volume: 0.8 });
