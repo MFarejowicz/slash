@@ -13,7 +13,7 @@ type Props = PublicProps;
 
 export const Practice = (props: Props) => {
   const [sequence, setSequence] = useState(generateSequence());
-  const [time, setTime] = useState(3000);
+  const [maxTime, setMaxTime] = useState(3000);
 
   const onAdvance = () => {
     const sequence = generateSequence();
@@ -32,7 +32,7 @@ export const Practice = (props: Props) => {
         <p className="Mode-title">Practice</p>
       </div>
       <div className="Mode-content">
-        <Slash sequence={sequence} time={time} onAdvance={onAdvance} />
+        <Slash sequence={sequence} maxTime={maxTime} onAdvance={onAdvance} />
       </div>
     </div>
   );
