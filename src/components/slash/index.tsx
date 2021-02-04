@@ -10,6 +10,7 @@ const LETTER_REGEX = /^[a-z]$/i;
 
 interface PublicProps {
   sequence: Sequence;
+  time?: number;
   onRestart?: () => void;
   onAdvance?: () => void;
 }
@@ -17,8 +18,8 @@ interface PublicProps {
 type Props = PublicProps;
 
 export const Slash = (props: Props) => {
-  const { sequence, onRestart, onAdvance } = props;
-  const slash = useSlash({ sequence });
+  const { sequence, time, onRestart, onAdvance } = props;
+  const slash = useSlash({ sequence, time });
 
   const onKeyDown = useCallback(
     (event: KeyboardEvent) => {
@@ -58,6 +59,9 @@ export const Slash = (props: Props) => {
         <div>
           <div>Your attempt: {slash.attempt.join(" ")}</div>
           <div>Result: {parseResult(slash.result)}</div>
+          <div>
+            Time: {slash.time}, Max: {props.time}
+          </div>
           <div>Press SPACE to try again</div>
           {slash.result === Result.Success && <div>Press ENTER to continue</div>}
         </div>

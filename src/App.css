@@ -1,10 +1,41 @@
 .App {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  height: 100vh;
 }
 
 .fadeOut {
   opacity: 0;
   transition: opacity 0.5s;
+}
+
+.Back {
+  cursor: pointer;
+  margin-left: 8px;
+}
+
+.Mode-container {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.Mode-header {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  align-items: center;
+  height: 70px;
+}
+
+.Mode-title {
+  justify-self: center;
+  font-size: 32px;
+  font-weight: bold;
+}
+
+.Mode-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-grow: 1;
 }
