@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import useSound from "use-sound";
 import bamboo from "./assets/bamboo.mp3";
 import slashFail from "./assets/slash-fail.mp3";
@@ -46,6 +46,7 @@ export const useSlash = ({ sequence, maxTime = 3000, onStart, onEnd }: Params): 
   const [attempt, setAttempt] = useState<Sequence>([]);
   const [result, setResult] = useState<Result>(Result.NotFinished);
   const timer = useTimer();
+  let timeout = useRef<ReturnType<typeof setInterval>>();
 
   const [bambooRate, setBambooRate] = useState(START_RATE);
   const [playBamboo] = useSound(bamboo, { playbackRate: bambooRate, volume: 0.9 });
@@ -57,9 +58,18 @@ export const useSlash = ({ sequence, maxTime = 3000, onStart, onEnd }: Params): 
       onStart?.(sequence);
 
       setPhase(Phase.Started);
-      setTimeout(() => setPhase(Phase.Ended), maxTime);
+      timeout.current = setTimeout(() => setPhase(Phase.Ended), maxTime);
     }
   };
+
+  /** clean up timeout if active when unmounting */
+  useEffect(() => {
+    return () => {
+      if (timeout.current) {
+        clearTimeout(timeout.current);
+      }
+    };
+  }, []);
 
   const add = (key: string) => {
     if (phase !== Phase.Ended && attempt.length < sequence.length) {

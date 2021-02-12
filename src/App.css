@@ -4,6 +4,17 @@
   height: 100vh;
 }
 
+.App-leaves {
+  position: absolute;
+  transform: translateX(108vw) translateY(20vh);
+  transition: transform 2200ms ease-out;
+  will-change: transform;
+}
+
+.App-leaves__flown {
+  transform: translateX(-108vw) translateY(-40vh);
+}
+
 .fadeOut {
   opacity: 0;
   transition: opacity 0.5s;

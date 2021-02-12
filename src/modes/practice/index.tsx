@@ -13,7 +13,7 @@ type Props = PublicProps;
 
 export const Practice = (props: Props) => {
   const [sequence, setSequence] = useState(generateSequence());
-  const [maxTime, setMaxTime] = useState(3000);
+  const [maxTime] = useState(3000);
 
   const onAdvance = () => {
     const sequence = generateSequence();
