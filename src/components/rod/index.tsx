@@ -1,6 +1,6 @@
 import _ from "lodash";
 import React, { useMemo } from "react";
-import { Slash } from "../../useSlash";
+import { Slash } from "../../utils/useSlash";
 import "./styles.css";
 
 const ROD_WIDTH = 40;

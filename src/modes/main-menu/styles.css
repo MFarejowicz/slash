@@ -1,6 +1,10 @@
-/* TODO */
 .MainMenu-title {
   font-size: 40px;
+}
+
+.MainMenu-option-container {
+  display: flex;
+  align-items: center;
 }
 
 .MainMenu-option {

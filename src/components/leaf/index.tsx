@@ -5,7 +5,7 @@ import "./styles.css";
 const OFFSET_MIN = -3;
 const OFFSET_MAX = 3;
 export const LEAF_QUANTITY = 15;
-const LEAF_GAP = 100 / LEAF_QUANTITY;
+export const LEAF_GAP = 100 / LEAF_QUANTITY;
 
 interface PublicProps {
   x: number;

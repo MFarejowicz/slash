@@ -1,8 +1,8 @@
 import classnames from "classnames";
 import { useCallback } from "react";
 import useEventListener from "@use-it/event-listener";
-import { Phase, Result, Sequence, useSlash } from "../../useSlash";
-import { parseResult } from "../../utils";
+import { parseResult } from "../../utils/parseResult";
+import { Phase, Result, Sequence, useSlash } from "../../utils/useSlash";
 import { Rod } from "../rod";
 import "./styles.css";
 
@@ -25,7 +25,7 @@ export const Slash = (props: Props) => {
     (event: KeyboardEvent) => {
       const key = event.key.toLowerCase();
 
-      if (LETTER_REGEX.test(key) && !event.repeat) {
+      if (!event.repeat && LETTER_REGEX.test(key)) {
         slash.start(); // slash handles checking if ready
         slash.add(key); // slash handles checking if not finished
       }

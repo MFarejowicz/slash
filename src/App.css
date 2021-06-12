@@ -1,7 +1,9 @@
 .App {
+  position: relative;
   display: flex;
   flex-direction: column;
   height: 100vh;
+  overflow: hidden;
 }
 
 .App-leaves {
@@ -33,7 +35,7 @@
 
 .Mode-header {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: 1fr;
   align-items: center;
   height: 70px;
 }

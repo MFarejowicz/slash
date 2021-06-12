@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useCallback, useState } from "react";
+import useEventListener from "@use-it/event-listener";
 import { Mode } from "../../App";
 import { Slash } from "../../components/slash";
 import { generateSequence } from "../../generateSequence";
@@ -11,7 +11,7 @@ interface PublicProps {
 
 type Props = PublicProps;
 
-export const Practice = (props: Props) => {
+export const Practice = ({ setMode }: Props) => {
   const [sequence, setSequence] = useState(generateSequence());
   const [maxTime] = useState(3000);
 
@@ -20,15 +20,28 @@ export const Practice = (props: Props) => {
     setSequence(sequence);
   };
 
+  const onKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      const key = event.key.toLowerCase();
+
+      if (!event.repeat) {
+        switch (key) {
+          case "backspace":
+            setMode(Mode.None);
+            break;
+          default:
+            break;
+        }
+      }
+    },
+    [setMode]
+  );
+
+  useEventListener("keydown", onKeyDown);
+
   return (
     <div className="Mode-container">
       <div className="Mode-header">
-        <FontAwesomeIcon
-          icon={["fas", "arrow-left"]}
-          className="Back"
-          size="4x"
-          onClick={() => props.setMode(Mode.None)}
-        />
         <p className="Mode-title">Practice</p>
       </div>
       <div className="Mode-content">

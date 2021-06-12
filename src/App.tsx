@@ -9,13 +9,15 @@ import { MainMenu } from "./modes/main-menu";
 import { Practice } from "./modes/practice";
 import "./App.css";
 
-library.add(fas, far);
-
 export enum Mode {
-  None = "none",
-  Practice = "practice",
-  Climb = "climb",
+  None = "None",
+  Practice = "Practice",
+  Climb = "Climb",
 }
+
+export const MODE_ORDER = [Mode.Practice, Mode.Climb];
+
+library.add(fas, far);
 
 function App() {
   const [mode, setMode] = useState(Mode.None);
@@ -39,19 +41,16 @@ function App() {
   };
 
   const leafClasses = classnames("App-leaves", { "App-leaves__flown": flown });
-  const renderLeaves = () => {
-    const leaves = [];
-    for (let x = 0; x < LEAF_QUANTITY; x++) {
-      for (let y = 0; y < LEAF_QUANTITY; y++) {
-        leaves.push(<Leaf key={`leaf-${x}-${y}`} x={x} y={y} />);
-      }
+  const leaves = [];
+  for (let x = 0; x < LEAF_QUANTITY; x++) {
+    for (let y = 0; y < LEAF_QUANTITY; y++) {
+      leaves.push(<Leaf key={`leaf-${x}-${y}`} x={x} y={y} />);
     }
-    return leaves;
-  };
+  }
 
   return (
     <div className="App">
-      <div className={leafClasses}>{renderLeaves()}</div>
+      <div className={leafClasses}>{leaves}</div>
       {renderMode()}
     </div>
   );
