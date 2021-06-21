@@ -22,21 +22,26 @@ library.add(fas, far);
 function App() {
   const [mode, setMode] = useState(Mode.None);
   const [flown, setFlown] = useState(false);
+  const [isTransition, setIsTranstion] = useState(false);
 
   const delayedSetMode = useCallback((mode: Mode) => {
     setFlown(mode === Mode.None ? false : true);
-    setTimeout(() => setMode(mode), 750);
+    setIsTranstion(true);
+    setTimeout(() => {
+      setIsTranstion(false);
+      setMode(mode);
+    }, 750);
   }, []);
 
   const renderMode = () => {
     switch (mode) {
       case Mode.Practice:
-        return <Practice setMode={delayedSetMode} />;
+        return <Practice isTransition={isTransition} setMode={delayedSetMode} />;
       case Mode.Climb:
         return <Climb setMode={delayedSetMode} />;
       case Mode.None:
       default:
-        return <MainMenu setMode={delayedSetMode} />;
+        return <MainMenu isTransition={isTransition} setMode={delayedSetMode} />;
     }
   };
 

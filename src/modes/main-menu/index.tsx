@@ -1,9 +1,13 @@
 import { useCallback, useState } from "react";
-import useEventListener from "@use-it/event-listener";
+import useSound from "use-sound";
 import { Mode, MODE_ORDER } from "../../App";
+import menuMove from "../../assets/menu-move.mp3";
+import menuSelect from "../../assets/menu-select.mp3";
+import { useKeyPress } from "../../utils/useKeyPress";
 import "./styles.css";
 
 interface PublicProps {
+  isTransition: boolean;
   setMode: (mode: Mode) => void;
 }
 
@@ -11,33 +15,35 @@ type Props = PublicProps;
 
 export const MainMenu = ({ setMode }: Props) => {
   const [modeIndex, setModeIndex] = useState(0);
+  const [playMove] = useSound(menuMove);
+  const [playSelect] = useSound(menuSelect);
 
   const onKeyDown = useCallback(
-    (event: KeyboardEvent) => {
-      const key = event.key.toLowerCase();
-
-      if (!event.repeat) {
-        let newIndex = 0;
-        switch (key) {
-          case "arrowup":
-            newIndex = (modeIndex - 1) % MODE_ORDER.length;
-            break;
-          case "arrowdown":
-            newIndex = (modeIndex + 1) % MODE_ORDER.length;
-            break;
-          case "enter":
-            setMode(MODE_ORDER[modeIndex]);
-            break;
-          default:
-            break;
-        }
-        setModeIndex(newIndex);
+    (key: string) => {
+      let newIndex = 0;
+      switch (key) {
+        case "arrowup":
+          newIndex = (modeIndex + MODE_ORDER.length - 1) % MODE_ORDER.length;
+          playMove();
+          setModeIndex(newIndex);
+          break;
+        case "arrowdown":
+          newIndex = (modeIndex + 1) % MODE_ORDER.length;
+          playMove();
+          setModeIndex(newIndex);
+          break;
+        case "enter":
+          playSelect();
+          setMode(MODE_ORDER[modeIndex]);
+          break;
+        default:
+          break;
       }
     },
-    [modeIndex, setMode]
+    [modeIndex, setMode, playMove, playSelect]
   );
 
-  useEventListener("keydown", onKeyDown);
+  useKeyPress(onKeyDown);
 
   const renderModeOption = (index: number) => {
     return (

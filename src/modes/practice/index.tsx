@@ -1,11 +1,14 @@
 import { useCallback, useState } from "react";
-import useEventListener from "@use-it/event-listener";
+import useSound from "use-sound";
 import { Mode } from "../../App";
+import menuBack from "../../assets/menu-back.mp3";
 import { Slash } from "../../components/slash";
 import { generateSequence } from "../../generateSequence";
+import { useKeyPress } from "../../utils/useKeyPress";
 import "./styles.css";
 
 interface PublicProps {
+  isTransition: boolean;
   setMode: (mode: Mode) => void;
 }
 
@@ -14,6 +17,7 @@ type Props = PublicProps;
 export const Practice = ({ setMode }: Props) => {
   const [sequence, setSequence] = useState(generateSequence());
   const [maxTime] = useState(3000);
+  const [playBack] = useSound(menuBack);
 
   const onAdvance = () => {
     const sequence = generateSequence();
@@ -21,23 +25,20 @@ export const Practice = ({ setMode }: Props) => {
   };
 
   const onKeyDown = useCallback(
-    (event: KeyboardEvent) => {
-      const key = event.key.toLowerCase();
-
-      if (!event.repeat) {
-        switch (key) {
-          case "backspace":
-            setMode(Mode.None);
-            break;
-          default:
-            break;
-        }
+    (key: string) => {
+      switch (key) {
+        case "backspace":
+          playBack();
+          setMode(Mode.None);
+          break;
+        default:
+          break;
       }
     },
-    [setMode]
+    [playBack, setMode]
   );
 
-  useEventListener("keydown", onKeyDown);
+  useKeyPress(onKeyDown);
 
   return (
     <div className="Mode-container">
