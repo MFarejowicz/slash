@@ -1,8 +1,9 @@
 import { useCallback, useState } from "react";
 import useSound from "use-sound";
+import { FaChevronRight } from "react-icons/fa";
 import { Mode, MODE_ORDER } from "../../App";
-import menuMove from "../../assets/menu-move.mp3";
-import menuSelect from "../../assets/menu-select.mp3";
+import menuMove from "../../assets/audio/menu-move.mp3";
+import menuSelect from "../../assets/audio/menu-select.mp3";
 import { useKeyPress } from "../../utils/useKeyPress";
 import "./styles.css";
 
@@ -48,7 +49,11 @@ export const MainMenu = ({ setMode }: Props) => {
   const renderModeOption = (index: number) => {
     return (
       <div className="MainMenu-option-container" key={`mode-option-${index}`}>
-        {modeIndex === index && <div>{">"}</div>}
+        {modeIndex === index && (
+          <div className="MainMenu-option-selector">
+            <FaChevronRight />
+          </div>
+        )}
         <div className="MainMenu-option" onClick={() => setMode(MODE_ORDER[index])}>
           {MODE_ORDER[index]}
         </div>
@@ -59,8 +64,13 @@ export const MainMenu = ({ setMode }: Props) => {
   return (
     <div className="Mode-container">
       <div className="Mode-content">
-        <div className="MainMenu-title">Way of the Slash!</div>
+        <h1 className="MainMenu-title">Way of the Slash!</h1>
         {MODE_ORDER.map((_el, index) => renderModeOption(index))}
+        <div className="MainMenu-description">
+          <p>Use the arrow keys to navigate</p>
+          <p>Hit enter to choose</p>
+          <p>Hit backspace to return</p>
+        </div>
       </div>
     </div>
   );

@@ -1,9 +1,10 @@
 import classnames from "classnames";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { far } from "@fortawesome/free-regular-svg-icons";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { Leaf, LEAF_QUANTITY } from "./components/leaf";
+import { wavingGrass } from "./grass";
 import { Climb } from "./modes/climb";
 import { MainMenu } from "./modes/main-menu";
 import { Practice } from "./modes/practice";
@@ -53,10 +54,15 @@ function App() {
     }
   }
 
+  useEffect(() => {
+    wavingGrass();
+  }, []);
+
   return (
     <div className="App">
       <div className={leafClasses}>{leaves}</div>
       {renderMode()}
+      <canvas width="1600px" height="200px" id="grass" />
     </div>
   );
 }

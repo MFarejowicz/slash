@@ -1,9 +1,9 @@
 import { useCallback, useState } from "react";
 import useSound from "use-sound";
 import { Mode } from "../../App";
-import menuBack from "../../assets/menu-back.mp3";
+import menuBack from "../../assets/audio/menu-back.mp3";
 import { Slash } from "../../components/slash";
-import { generateSequence } from "../../generateSequence";
+import { generateSequence } from "../../utils/generateSequence";
 import { useKeyPress } from "../../utils/useKeyPress";
 import "./styles.css";
 

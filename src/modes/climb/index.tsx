@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import useSound from "use-sound";
 import { Mode } from "../../App";
-import menuBack from "../../assets/menu-back.mp3";
+import menuBack from "../../assets/audio/menu-back.mp3";
 import { useKeyPress } from "../../utils/useKeyPress";
 import "./styles.css";
 

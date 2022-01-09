@@ -1,14 +1,29 @@
 .MainMenu-title {
-  font-size: 40px;
+  font-size: 60px;
+  font-family: "Tsushima";
+  margin-bottom: 40px;
 }
 
 .MainMenu-option-container {
+  position: relative;
   display: flex;
   align-items: center;
 }
 
 .MainMenu-option {
   cursor: pointer;
-  font-size: 24px;
+  font-size: 32px;
+  font-family: "Tsushima";
   margin: 12px 0;
+}
+
+.MainMenu-option-selector {
+  position: absolute;
+  left: -20px;
+}
+
+.MainMenu-description {
+  font-size: 24px;
+  text-align: center;
+  margin-top: 30px;
 }
