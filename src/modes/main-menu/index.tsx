@@ -9,15 +9,32 @@ import "./styles.css";
 
 interface PublicProps {
   isTransition: boolean;
+  setHasInteracted: (hasInteracted: boolean) => void;
   setMode: (mode: Mode) => void;
 }
 
 type Props = PublicProps;
 
-export const MainMenu = ({ setMode }: Props) => {
+export const MainMenu = ({ setHasInteracted, setMode }: Props) => {
   const [modeIndex, setModeIndex] = useState(0);
   const [playMove] = useSound(menuMove);
   const [playSelect] = useSound(menuSelect);
+
+  const selectMode = useCallback(
+    (index) => {
+      playMove();
+      setModeIndex(index);
+    },
+    [playMove]
+  );
+
+  const toMode = useCallback(
+    (index) => {
+      playSelect();
+      setMode(MODE_ORDER[index]);
+    },
+    [playSelect, setMode]
+  );
 
   const onKeyDown = useCallback(
     (key: string) => {
@@ -25,36 +42,39 @@ export const MainMenu = ({ setMode }: Props) => {
       switch (key) {
         case "arrowup":
           newIndex = (modeIndex + MODE_ORDER.length - 1) % MODE_ORDER.length;
-          playMove();
-          setModeIndex(newIndex);
+          setHasInteracted(true);
+          selectMode(newIndex);
           break;
         case "arrowdown":
           newIndex = (modeIndex + 1) % MODE_ORDER.length;
-          playMove();
-          setModeIndex(newIndex);
+          setHasInteracted(true);
+          selectMode(newIndex);
           break;
         case "enter":
-          playSelect();
-          setMode(MODE_ORDER[modeIndex]);
+          toMode(modeIndex);
           break;
         default:
           break;
       }
     },
-    [modeIndex, setMode, playMove, playSelect]
+    [modeIndex, setHasInteracted, selectMode, toMode]
   );
 
   useKeyPress(onKeyDown);
 
   const renderModeOption = (index: number) => {
     return (
-      <div className="MainMenu-option-container" key={`mode-option-${index}`}>
+      <div
+        className="MainMenu-option-container"
+        key={`mode-option-${index}`}
+        onMouseEnter={() => selectMode(index)}
+      >
         {modeIndex === index && (
           <div className="MainMenu-option-selector">
             <FaChevronRight />
           </div>
         )}
-        <div className="MainMenu-option" onClick={() => setMode(MODE_ORDER[index])}>
+        <div className="MainMenu-option" onClick={() => toMode(index)}>
           {MODE_ORDER[index]}
         </div>
       </div>

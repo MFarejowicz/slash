@@ -1,8 +1,10 @@
 import classnames from "classnames";
 import { useCallback, useEffect, useState } from "react";
+import useSound from "use-sound";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { far } from "@fortawesome/free-regular-svg-icons";
 import { fas } from "@fortawesome/free-solid-svg-icons";
+import forest from "./assets/audio/forest.mp3";
 import { Leaf, LEAF_QUANTITY } from "./components/leaf";
 import { wavingGrass } from "./grass";
 import { Climb } from "./modes/climb";
@@ -24,8 +26,11 @@ function App() {
   const [mode, setMode] = useState(Mode.None);
   const [flown, setFlown] = useState(false);
   const [isTransition, setIsTranstion] = useState(false);
+  const [hasInteracted, setHasInteracted] = useState(false);
+  const [playAmbience] = useSound(forest, { loop: true });
 
   const delayedSetMode = useCallback((mode: Mode) => {
+    setHasInteracted(true);
     setFlown(mode === Mode.None ? false : true);
     setIsTranstion(true);
     setTimeout(() => {
@@ -42,7 +47,13 @@ function App() {
         return <Climb setMode={delayedSetMode} />;
       case Mode.None:
       default:
-        return <MainMenu isTransition={isTransition} setMode={delayedSetMode} />;
+        return (
+          <MainMenu
+            isTransition={isTransition}
+            setHasInteracted={setHasInteracted}
+            setMode={delayedSetMode}
+          />
+        );
     }
   };
 
@@ -53,6 +64,12 @@ function App() {
       leaves.push(<Leaf key={`leaf-${x}-${y}`} x={x} y={y} />);
     }
   }
+
+  useEffect(() => {
+    if (hasInteracted) {
+      // playAmbience();
+    }
+  }, [hasInteracted, playAmbience]);
 
   useEffect(() => {
     wavingGrass();
