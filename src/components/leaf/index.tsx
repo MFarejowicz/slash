@@ -1,4 +1,4 @@
-import _ from "lodash";
+import { random } from "lodash";
 import { useMemo } from "react";
 import "./styles.css";
 
@@ -15,10 +15,10 @@ interface PublicProps {
 type Props = PublicProps;
 
 export const Leaf = ({ x, y }: Props) => {
-  const leftOffset = useMemo(() => _.random(OFFSET_MIN, OFFSET_MAX, true), []);
+  const leftOffset = useMemo(() => random(OFFSET_MIN, OFFSET_MAX, true), []);
   const left = `${x * LEAF_GAP + leftOffset}vw`;
 
-  const topOffset = useMemo(() => _.random(OFFSET_MIN, OFFSET_MAX, true), []);
+  const topOffset = useMemo(() => random(OFFSET_MIN, OFFSET_MAX, true), []);
   const top = `${y * LEAF_GAP + topOffset}vh`;
 
   return <div className="Leaf" style={{ top, left }} />;

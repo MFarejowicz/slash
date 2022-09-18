@@ -1,5 +1,5 @@
 import classnames from "classnames";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import useSound from "use-sound";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { far } from "@fortawesome/free-regular-svg-icons";
@@ -13,9 +13,14 @@ import { Practice } from "./modes/practice";
 import "./App.css";
 
 export enum Mode {
-  None = "None",
-  Practice = "Practice",
-  Climb = "Climb",
+  None = "none",
+  Practice = "practice",
+  Climb = "climb",
+}
+
+enum LeafPosition {
+  Down = "down",
+  Up = "up",
 }
 
 export const MODE_ORDER = [Mode.Practice, Mode.Climb];
@@ -24,60 +29,58 @@ library.add(fas, far);
 
 function App() {
   const [mode, setMode] = useState(Mode.None);
-  const [flown, setFlown] = useState(false);
-  const [isTransition, setIsTranstion] = useState(false);
-  const [hasInteracted, setHasInteracted] = useState(false);
+  const [leafPosition, setLeafPosition] = useState(LeafPosition.Down);
+
+  const isPlayingAmbience = useRef(false);
   const [playAmbience] = useSound(forest, { loop: true });
 
-  const delayedSetMode = useCallback((mode: Mode) => {
-    setHasInteracted(true);
-    setFlown(mode === Mode.None ? false : true);
-    setIsTranstion(true);
-    setTimeout(() => {
-      setIsTranstion(false);
-      setMode(mode);
-    }, 750);
-  }, []);
-
-  const renderMode = () => {
-    switch (mode) {
-      case Mode.Practice:
-        return <Practice isTransition={isTransition} setMode={delayedSetMode} />;
-      case Mode.Climb:
-        return <Climb setMode={delayedSetMode} />;
-      case Mode.None:
-      default:
-        return (
-          <MainMenu
-            isTransition={isTransition}
-            setHasInteracted={setHasInteracted}
-            setMode={delayedSetMode}
-          />
-        );
-    }
-  };
-
-  const leafClasses = classnames("App-leaves", { "App-leaves__flown": flown });
-  const leaves = [];
-  for (let x = 0; x < LEAF_QUANTITY; x++) {
-    for (let y = 0; y < LEAF_QUANTITY; y++) {
-      leaves.push(<Leaf key={`leaf-${x}-${y}`} x={x} y={y} />);
-    }
-  }
-
-  useEffect(() => {
-    if (hasInteracted) {
-      // playAmbience();
-    }
-  }, [hasInteracted, playAmbience]);
-
+  // start the grass waving animation once
   useEffect(() => {
     wavingGrass();
   }, []);
 
+  const delayedSetMode = useCallback(
+    (mode: Mode) => {
+      setLeafPosition(mode === Mode.None ? LeafPosition.Down : LeafPosition.Up);
+      if (!isPlayingAmbience.current) {
+        playAmbience();
+        isPlayingAmbience.current = true;
+      }
+      setTimeout(() => {
+        setMode(mode);
+      }, 750);
+    },
+    [playAmbience]
+  );
+
+  const renderMode = useCallback(() => {
+    switch (mode) {
+      case Mode.Practice:
+        return <Practice setMode={delayedSetMode} />;
+      case Mode.Climb:
+        return <Climb setMode={delayedSetMode} />;
+      case Mode.None:
+      default:
+        return <MainMenu setMode={delayedSetMode} />;
+    }
+  }, [delayedSetMode, mode]);
+
+  const renderLeaves = useCallback(() => {
+    const leaves = [];
+    for (let x = 0; x < LEAF_QUANTITY; x++) {
+      for (let y = 0; y < LEAF_QUANTITY; y++) {
+        leaves.push(<Leaf key={`leaf-${x}-${y}`} x={x} y={y} />);
+      }
+    }
+    return leaves;
+  }, []);
+  const leafClasses = classnames("App-leaves", {
+    "App-leaves__up": leafPosition === LeafPosition.Up,
+  });
+
   return (
     <div className="App">
-      <div className={leafClasses}>{leaves}</div>
+      <div className={leafClasses}>{renderLeaves()}</div>
       {renderMode()}
       <canvas width="1600px" height="200px" id="grass" />
     </div>

@@ -23,7 +23,7 @@
   will-change: transform;
 }
 
-.App-leaves__flown {
+.App-leaves__up {
   transform: translateX(-108vw) translateY(-40vh);
 }
 

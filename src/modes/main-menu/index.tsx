@@ -8,14 +8,12 @@ import { useKeyPress } from "../../utils/useKeyPress";
 import "./styles.css";
 
 interface PublicProps {
-  isTransition: boolean;
-  setHasInteracted: (hasInteracted: boolean) => void;
   setMode: (mode: Mode) => void;
 }
 
 type Props = PublicProps;
 
-export const MainMenu = ({ setHasInteracted, setMode }: Props) => {
+export const MainMenu = ({ setMode }: Props) => {
   const [modeIndex, setModeIndex] = useState(0);
   const [playMove] = useSound(menuMove);
   const [playSelect] = useSound(menuSelect);
@@ -42,12 +40,10 @@ export const MainMenu = ({ setHasInteracted, setMode }: Props) => {
       switch (key) {
         case "arrowup":
           newIndex = (modeIndex + MODE_ORDER.length - 1) % MODE_ORDER.length;
-          setHasInteracted(true);
           selectMode(newIndex);
           break;
         case "arrowdown":
           newIndex = (modeIndex + 1) % MODE_ORDER.length;
-          setHasInteracted(true);
           selectMode(newIndex);
           break;
         case "enter":
@@ -57,29 +53,32 @@ export const MainMenu = ({ setHasInteracted, setMode }: Props) => {
           break;
       }
     },
-    [modeIndex, setHasInteracted, selectMode, toMode]
+    [modeIndex, selectMode, toMode]
   );
 
   useKeyPress(onKeyDown);
 
-  const renderModeOption = (index: number) => {
-    return (
-      <div
-        className="MainMenu-option-container"
-        key={`mode-option-${index}`}
-        onMouseEnter={() => selectMode(index)}
-      >
-        {modeIndex === index && (
-          <div className="MainMenu-option-selector">
-            <FaChevronRight />
+  const renderModeOption = useCallback(
+    (index: number) => {
+      return (
+        <div
+          className="MainMenu-option-container"
+          key={`mode-option-${index}`}
+          onMouseEnter={() => selectMode(index)}
+        >
+          {modeIndex === index && (
+            <div className="MainMenu-option-selector">
+              <FaChevronRight />
+            </div>
+          )}
+          <div className="MainMenu-option" onClick={() => toMode(index)}>
+            {MODE_ORDER[index]}
           </div>
-        )}
-        <div className="MainMenu-option" onClick={() => toMode(index)}>
-          {MODE_ORDER[index]}
         </div>
-      </div>
-    );
-  };
+      );
+    },
+    [modeIndex, selectMode, toMode]
+  );
 
   return (
     <div className="Mode-container">

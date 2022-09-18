@@ -8,7 +8,6 @@ import { useKeyPress } from "../../utils/useKeyPress";
 import "./styles.css";
 
 interface PublicProps {
-  isTransition: boolean;
   setMode: (mode: Mode) => void;
 }
 
