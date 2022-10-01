@@ -1,56 +1,26 @@
 import classnames from "classnames";
 import { useCallback } from "react";
-import useEventListener from "@use-it/event-listener";
+import { Phase, Result, useSlash } from "../../contexts/slash-context";
 import { parseResult } from "../../utils/parseResult";
-import { Phase, Result, Sequence, useSlash } from "../../utils/useSlash";
+import { useKeyPress } from "../../utils/useKeyPress";
 import { Rod } from "../rod";
 import "./styles.css";
 
 const LETTER_REGEX = /^[a-z]$/i;
 
-interface PublicProps {
-  sequence: Sequence;
-  maxTime?: number;
-  onRestart?: () => void;
-  onAdvance?: () => void;
-}
-
-type Props = PublicProps;
-
-export const Slash = (props: Props) => {
-  const { sequence, maxTime, onRestart, onAdvance } = props;
-  const slash = useSlash({ sequence, maxTime });
+export const Slash = () => {
+  const slash = useSlash();
 
   const onKeyDown = useCallback(
-    (event: KeyboardEvent) => {
-      const key = event.key.toLowerCase();
-
-      if (!event.repeat && LETTER_REGEX.test(key)) {
-        slash.start(); // slash handles checking if ready
-        slash.add(key); // slash handles checking if not finished
-      }
-
-      if (!event.repeat && slash.phase === Phase.Ended) {
-        switch (key) {
-          case " ":
-            slash.reset();
-            onRestart?.();
-            break;
-          case "enter":
-            if (slash.result === Result.Success) {
-              slash.reset();
-              onAdvance?.();
-            }
-            break;
-          default:
-            break;
-        }
+    (key: string) => {
+      if (LETTER_REGEX.test(key)) {
+        slash.add(key);
       }
     },
-    [slash, onRestart, onAdvance]
+    [slash]
   );
 
-  useEventListener("keydown", onKeyDown);
+  useKeyPress(onKeyDown);
 
   const classes = classnames("Slash-rods", { fadeOut: slash.phase === Phase.Started });
   return (
@@ -60,7 +30,7 @@ export const Slash = (props: Props) => {
           <div>Your attempt: {slash.attempt.join(" ")}</div>
           <div>Result: {parseResult(slash.result)}</div>
           <div>
-            Time: {slash.time}, Max: {props.maxTime}
+            Time: {slash.time}, Max: {slash.maxTime}
           </div>
           <div>Press SPACE to try again</div>
           {slash.result === Result.Success && <div>Press ENTER to continue</div>}
@@ -68,7 +38,7 @@ export const Slash = (props: Props) => {
       )}
       <div className={classes}>
         {slash.sequence.map((_el, index) => (
-          <Rod key={`rod-${index}`} slash={slash} index={index} />
+          <Rod key={`rod-${index}`} sequence={slash.sequence} index={index} />
         ))}
       </div>
     </div>

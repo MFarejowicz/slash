@@ -1,9 +1,9 @@
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import useSound from "use-sound";
 import { Mode } from "../../App";
 import menuBack from "../../assets/audio/menu-back.mp3";
 import { Slash } from "../../components/slash";
-import { generateSequence } from "../../utils/generateSequence";
+import { Result, useSlash } from "../../contexts/slash-context";
 import { useKeyPress } from "../../utils/useKeyPress";
 import "./styles.css";
 
@@ -14,27 +14,31 @@ interface PublicProps {
 type Props = PublicProps;
 
 export const Practice = ({ setMode }: Props) => {
-  const [sequence, setSequence] = useState(generateSequence());
-  const [maxTime] = useState(3000);
+  const slash = useSlash();
   const [playBack] = useSound(menuBack);
-
-  const onAdvance = () => {
-    const sequence = generateSequence();
-    setSequence(sequence);
-  };
 
   const onKeyDown = useCallback(
     (key: string) => {
       switch (key) {
         case "backspace":
+          slash.reset();
           playBack();
           setMode(Mode.None);
+          break;
+        case " ":
+          slash.reset();
+          break;
+        case "enter":
+          if (slash.result === Result.Success) {
+            slash.setMaxTime(slash.maxTime - 100);
+            slash.renew();
+          }
           break;
         default:
           break;
       }
     },
-    [playBack, setMode]
+    [playBack, setMode, slash]
   );
 
   useKeyPress(onKeyDown);
@@ -45,7 +49,7 @@ export const Practice = ({ setMode }: Props) => {
         <p className="Mode-title">Practice</p>
       </div>
       <div className="Mode-content">
-        <Slash sequence={sequence} maxTime={maxTime} onAdvance={onAdvance} />
+        <Slash />
       </div>
     </div>
   );

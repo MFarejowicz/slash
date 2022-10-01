@@ -6,6 +6,7 @@ import { far } from "@fortawesome/free-regular-svg-icons";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import forest from "./assets/audio/forest.mp3";
 import { Leaf, LEAF_QUANTITY } from "./components/leaf";
+import { SlashContextManager } from "./contexts/slash-context";
 import { wavingGrass } from "./grass";
 import { Climb } from "./modes/climb";
 import { MainMenu } from "./modes/main-menu";
@@ -80,9 +81,11 @@ function App() {
 
   return (
     <div className="App">
-      <div className={leafClasses}>{renderLeaves()}</div>
-      {renderMode()}
-      <canvas width="1600px" height="200px" id="grass" />
+      <SlashContextManager>
+        <div className={leafClasses}>{renderLeaves()}</div>
+        {renderMode()}
+        <canvas width="1600px" height="200px" id="grass" />
+      </SlashContextManager>
     </div>
   );
 }

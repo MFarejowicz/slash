@@ -1,4 +1,4 @@
-import { Result } from "./useSlash";
+import { Result } from "../contexts/slash-context";
 
 export function parseResult(result: Result) {
   switch (result) {

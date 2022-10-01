@@ -1,36 +1,32 @@
-import { random } from "lodash";
+import { sample } from "lodash";
+
+interface PatternMap {
+  [char: string]: string;
+}
 
 const ALPHABET = "abcdefghijklmnopqrstuvwxyz";
 const PATTERNS = ["AABBCBB", "AABBBCC"];
 
-function removeDuplicateCharacters(str: string) {
-  return str
-    .split("")
-    .filter((item, pos, self) => self.indexOf(item) === pos)
-    .join("");
-}
-
-function getRandomCharacter(used: Set<string>) {
-  let char = ALPHABET[random(ALPHABET.length - 1)];
-  while (used.has(char)) {
-    char = ALPHABET[random(ALPHABET.length - 1)];
+function getRandomCharacter(map: PatternMap) {
+  let char = sample(ALPHABET)!;
+  while (char in map) {
+    char = sample(ALPHABET)!;
   }
   return char;
 }
 
 export function generateSequence() {
-  const index = random(PATTERNS.length - 1);
-  const pattern = PATTERNS[index];
+  const pattern = sample(PATTERNS)!;
 
-  const unique = removeDuplicateCharacters(pattern);
-  const used = new Set<string>();
-
-  const patternMap: { [base: string]: string } = {};
-  for (const letter of unique) {
-    const randomCharacter = getRandomCharacter(used);
-    used.add(randomCharacter);
-    patternMap[letter] = randomCharacter;
+  const patternMap: PatternMap = {};
+  const result: string[] = [];
+  for (const letter of pattern) {
+    if (!(letter in patternMap)) {
+      const randomCharacter = getRandomCharacter(patternMap);
+      patternMap[letter] = randomCharacter;
+    }
+    result.push(patternMap[letter]);
   }
 
-  return pattern.replace(new RegExp(`[${unique}]`, "g"), (base) => patternMap[base]).split("");
+  return result;
 }
